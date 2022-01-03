@@ -32,9 +32,16 @@ https://explorer.testnet.near.org/transactions/ExwDPVb6hUFR2Crj8XdqyLm8uGHeXcMAw
 ## Reference links:
 
 https://doc.rust-lang.org/nightly/core/option/enum.Option.html
+
 https://docs.rs/near-sdk/latest/near_sdk/collections/struct.LookupMap.html
+
 https://github.com/near/near-sdk-rs/tree/master/examples/status-message
+
 https://www.near-sdk.io/contract-structure/collections#storage-space
+
 https://www.near-sdk.io/contract-structure/near-bindgen
+
 https://docs.near.org/docs/develop/contracts/rust/near-sdk-rs
+
 https://docs.near.org/docs/tutorials/contracts/nfts/events
+
