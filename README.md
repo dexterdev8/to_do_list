@@ -1,8 +1,11 @@
 ## Timeline:
 
 December 30 2021: Setup Rust env, Near-cli and testnet account
+
 December 31 2021: Research on Rust and the near-sdk
+
 January 01 2022: Having some fun :)
+
 January 03 2022: Implementing the Smart Contract + unit tests and playing with the calls
 
 ## To sum up:
