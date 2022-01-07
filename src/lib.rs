@@ -7,9 +7,7 @@ pub use crate::events::*;
 
 mod events;
 
-/// This spec can be treated like a version of the standard.
 pub const TODO_METADATA_SPEC: &str = "unknown";
-/// This is the name of the NFT standard we're using
 pub const TODO_STANDARD_NAME: &str = "unknown";
 
 #[derive(Default, BorshDeserialize, BorshSerialize)]
