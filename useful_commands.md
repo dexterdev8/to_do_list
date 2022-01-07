@@ -6,6 +6,10 @@
 
 `cargo build --target wasm32-unknown-unknown --release`
 
+## Create NEAR subaccount to deploy the smart contract:
+
+`near create-account to-do-tasks.dexterdev8.testnet --masterAccount dexterdev8.testnet`
+
 ## Deploy your smart contract to as a subaccount of dexterdev8.testnet:
 
 `near deploy --accountId to-do-tasks.dexterdev8.testnet --wasmFile target/wasm32-unknown-unknown/release/to_do_contract.wasm`
