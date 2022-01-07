@@ -71,7 +71,7 @@ impl ToDoList {
     #[payable]
     pub fn toggle_completed(&mut self, id: u8) {
         let _task: Option<Task> = self.tasks.get(&id);
-        assert_eq!(_task.is_some(), true);
+        assert_eq!(_task.is_some(), true, "Given ID does not exist!");
         let mut _unwrapped_task: Task = _task.unwrap();
 
         _unwrapped_task.completed = !_unwrapped_task.completed;
@@ -166,6 +166,7 @@ mod tests {
     }
 
     #[test]
+    #[should_panic(expected = r#"Given ID does not exist!"#)]
     fn toggle_wrong_id() {
         // set up the mock context into the testing environment
         let context = get_context(to_valid_account("foo.near"));
