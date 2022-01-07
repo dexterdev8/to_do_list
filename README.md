@@ -34,6 +34,8 @@ https://explorer.testnet.near.org/transactions/ExwDPVb6hUFR2Crj8XdqyLm8uGHeXcMAw
 
 ## Reference links:
 
+https://www.near-sdk.io/reducing-contract-size/examples
+
 https://doc.rust-lang.org/nightly/core/option/enum.Option.html
 
 https://docs.rs/near-sdk/latest/near_sdk/collections/struct.LookupMap.html
@@ -47,4 +49,3 @@ https://www.near-sdk.io/contract-structure/near-bindgen
 https://docs.near.org/docs/develop/contracts/rust/near-sdk-rs
 
 https://docs.near.org/docs/tutorials/contracts/nfts/events
-
