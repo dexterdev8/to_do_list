@@ -1,7 +1,7 @@
 use near_sdk::borsh::{self, BorshDeserialize, BorshSerialize};
 use near_sdk::collections::LookupMap;
-use near_sdk::env::log;
-use near_sdk::{near_bindgen, PanicOnDefault};
+use near_sdk::env;
+use near_sdk::near_bindgen;
 
 pub use crate::events::*;
 
@@ -20,16 +20,23 @@ pub struct Task {
 }
 
 #[near_bindgen]
-#[derive(BorshDeserialize, BorshSerialize, PanicOnDefault)]
+#[derive(BorshDeserialize, BorshSerialize)]
 pub struct ToDoList {
     tasks: LookupMap<u8, Task>,
     task_counter: u8,
+}
+
+impl Default for ToDoList {
+    fn default() -> Self {
+        env::panic(b"Contract must be initialized before usage with 'new' function call.");
+    }
 }
 
 #[near_bindgen]
 impl ToDoList {
     #[init]
     pub fn new() -> Self {
+        assert!(env::state_read::<Self>().is_none(), "Already initialized");
         let task: Task = Task {
             id: 0,
             content: "Default task".to_string(),
@@ -65,7 +72,7 @@ impl ToDoList {
         };
         self.task_counter = self.task_counter + 1;
         //emit task creation event
-        log(&_create_task_log.to_string().as_bytes());
+        env::log(&_create_task_log.to_string().as_bytes());
     }
 
     #[payable]
@@ -88,7 +95,7 @@ impl ToDoList {
             }]),
         };
         //emit toggle completed event
-        log(&_toggle_completed_log.to_string().as_bytes());
+        env::log(&_toggle_completed_log.to_string().as_bytes());
     }
 }
 
