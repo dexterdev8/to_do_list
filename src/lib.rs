@@ -17,21 +17,42 @@ pub struct Task {
     completed: bool,
 }
 
+#[derive(BorshDeserialize, BorshSerialize)]
+pub struct ToDoListV1 {
+    tasks: LookupMap<u8, Task>,
+    task_counter: u8,
+}
+
 #[near_bindgen]
 #[derive(BorshDeserialize, BorshSerialize)]
 pub struct ToDoList {
     tasks: LookupMap<u8, Task>,
     task_counter: u8,
+    participants_interactions: LookupMap<String, u8>,
 }
 
 impl Default for ToDoList {
     fn default() -> Self {
-        env::panic(b"Contract must be initialized before usage with 'new' function call.");
+        let task: Task = Task {
+            id: 0,
+            content: "Default task".to_string(),
+            completed: false,
+        };
+        let mut tasks: LookupMap<u8, Task> = LookupMap::new(0);
+        tasks.insert(&0, &task);
+        let mut participants_init: LookupMap<String, u8> = LookupMap::new(0);
+        participants_init.insert(&"Admin".to_string(), &1);
+        Self {
+            tasks,
+            task_counter: 1,
+            participants_interactions: participants_init,
+        }
     }
 }
 
 #[near_bindgen]
 impl ToDoList {
+    /*
     #[init]
     pub fn new() -> Self {
         assert!(env::state_read::<Self>().is_none(), "Already initialized");
@@ -47,6 +68,7 @@ impl ToDoList {
             task_counter: 1,
         }
     }
+    */
 
     #[payable]
     pub fn create_task(&mut self, _content: String) {
@@ -69,6 +91,18 @@ impl ToDoList {
             }]),
         };
         self.task_counter = self.task_counter + 1;
+
+        //Add participant...A V2 functionality
+        let message_sender = env::signer_account_id();
+        if self.participants_interactions.contains_key(&message_sender) {
+            let n_interaction = self.participants_interactions.get(&message_sender).unwrap() + 1;
+            self.participants_interactions
+                .insert(&message_sender, &n_interaction);
+        } else {
+            // First interaction
+            self.participants_interactions.insert(&message_sender, &1);
+        }
+        // End of V2 functionality
         //emit task creation event
         env::log(&_create_task_log.to_string().as_bytes());
     }
@@ -94,6 +128,29 @@ impl ToDoList {
         };
         //emit toggle completed event
         env::log(&_toggle_completed_log.to_string().as_bytes());
+    }
+
+    pub fn get_participations(&self) -> u8 {
+        assert_eq!(
+            self.participants_interactions
+                .contains_key(&env::signer_account_id()),
+            true,
+            "You did not interact with the contract yet"
+        );
+        self.participants_interactions
+            .get(&env::signer_account_id())
+            .unwrap()
+    }
+
+    #[private]
+    #[init(ignore_state)]
+    pub fn migrate() -> Self {
+        let old_state: ToDoListV1 = env::state_read().expect("failed");
+        Self {
+            tasks: old_state.tasks,
+            task_counter: old_state.task_counter,
+            participants_interactions: LookupMap::new(b"b".to_vec()),
+        }
     }
 }
 
@@ -125,7 +182,7 @@ mod tests {
         let context = get_context(to_valid_account("foo.near"));
         testing_env!(context.build());
 
-        let mut contract = ToDoList::new();
+        let mut contract = ToDoList::default();
 
         assert_eq!(1, contract.task_counter);
 
@@ -150,7 +207,7 @@ mod tests {
         let context = get_context(to_valid_account("foo.near"));
         testing_env!(context.build());
         let task_id: u8 = 1;
-        let mut contract = ToDoList::new();
+        let mut contract = ToDoList::default();
 
         contract.create_task("Play with the dog".to_string());
         println!(
@@ -177,8 +234,34 @@ mod tests {
         let context = get_context(to_valid_account("foo.near"));
         testing_env!(context.build());
         let task_id: u8 = 5;
-        let mut contract = ToDoList::new();
+        let mut contract = ToDoList::default();
 
         contract.toggle_completed(task_id);
+    }
+
+    #[test]
+    fn test_interactions() {
+        // set up the mock context into the testing environment
+        let context = get_context(to_valid_account("foo.near"));
+        testing_env!(context.build());
+        let mut contract = ToDoList::default();
+
+        contract.create_task("First task of the day".to_string());
+        assert_eq!(1, contract.get_participations());
+        contract.create_task("Second task of the day".to_string());
+        assert_eq!(2, contract.get_participations());
+
+        println!("{}", env::signer_account_id());
+    }
+
+    #[test]
+    #[should_panic(expected = r#"You did not interact with the contract yet"#)]
+    fn test_no_interactions() {
+        // set up the mock context into the testing environment
+        let context = get_context(to_valid_account("foo.near"));
+        testing_env!(context.build());
+        let contract = ToDoList::default();
+
+        contract.get_participations();
     }
 }

@@ -14,6 +14,10 @@
 
 `near deploy --accountId to-do-tasks.dexterdev8.testnet --wasmFile target/wasm32-unknown-unknown/release/to_do_contract.wasm`
 
+## Deploy Smart Contract V2:
+
+`near deploy --wasmFile target/wasm32-unknown-unknown/release/to_do_contract.wasm --initFunction "migrate" --initArgs "{}" --accountId to-do-tasks.dexterdev8.testnet`
+
 ## Delete the subaccount so you can deploy again your smart contract:
 
 `near delete to-do-tasks.dexterdev8.testnet dexterdev8.testnet`
