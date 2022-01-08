@@ -19,7 +19,18 @@ I really enjoied playing aroung with the near-sdk and doing my research on what 
 Small concern from my side: the events.
 I followed an example form the Near doc and by now, the result looks fine in the block explorer but I have the feeling that it can be done in a better way. I hope you can give me some detailed feedback regarding this.
 
-## [Deprecated] Links to block explorer:
+Why making the contract upgradeable?
+Probably I should have sticked to the PDF requirements but I had a lot of free time this week :)
+
+### Note to myself:
+
+Once I've deployed the V2 contract, I had to make a small change in the code. In order to deploy again I used:
+
+`near deploy --accountId to-do-tasks.dexterdev8.testnet --wasmFile target/wasm32-unknown-unknown/release/to_do_contract.wasm`
+
+Since I did don change the structure of the data it made no sense to migrate again. After testing seems to work fine.
+
+## Links to block explorer:
 
 Contract/Account:
 https://explorer.testnet.near.org/accounts/to-do-tasks.dexterdev8.testnet
